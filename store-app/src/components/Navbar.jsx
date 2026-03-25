@@ -23,7 +23,7 @@ export default function Navbar() {
                     </IconButton>
                     {
                     links.map((link) => (
-                    <Button component={NavLink} to={link.to} color="inherit">
+                    <Button key={link.to} component={NavLink} to={link.to} color="inherit">
                       {link.title}
                     </Button>
                     ))}
@@ -43,7 +43,7 @@ export default function Navbar() {
                     </IconButton>
                     {
                     authLinks.map((link) => (
-                    <Button component={NavLink} to={link.to} color="inherit">
+                    <Button key={link.to} component={NavLink} to={link.to} color="inherit">
                       {link.title}
                     </Button>
                     ))}
