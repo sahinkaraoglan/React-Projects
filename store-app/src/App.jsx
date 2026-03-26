@@ -6,8 +6,11 @@ import CartPage from "./pages/Cart";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import ProductsDetailsPage from "./pages/ProductsDetails";
+import ErrorPage from "./pages/errors/Error";
+import ServerErrorPage from "./pages/errors/ServerError";
 
- const router = createBrowserRouter([
+
+export const router = createBrowserRouter([
   { path: "/", element: <MainLayout />, 
     children: [
         {index: true, element: <HomePage />},
@@ -22,6 +25,13 @@ import ProductsDetailsPage from "./pages/ProductsDetails";
         {path: "cart", element: <CartPage />},
         {path: "login", element: <LoginPage />},
         {path: "register", element: <RegisterPage />},
+        {
+          path: "errors", 
+          children: [
+            {index: true, element: <ErrorPage />},
+            {path: "server-error", element: <ServerErrorPage />},
+          ],
+        },
     ]},
  ]);
 
