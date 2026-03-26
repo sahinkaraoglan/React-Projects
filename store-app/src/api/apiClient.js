@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { router } from "../App";
 
 axios.defaults.baseURL = "http://localhost:5000/";
+axios.defaults.withCredentials = true;
 
 axios.interceptors.response.use(
   (response) => {
@@ -46,6 +47,7 @@ axios.interceptors.response.use(
   }
 );
 
+//METOTLAR
 const methods = {
   get: (url) => axios.get(url).then((response) => response.data),
   post: (url, body) => axios.post(url, body).then((response) => response.data),
@@ -54,12 +56,13 @@ const methods = {
 };
 
 
-//products kısmı için yazılan metotlar
+//products kısmı için yazılan requestler
 const products = {
   list: () => methods.get("products"),
   details: (id) => methods.get(`products/${id}`),
 };
 
+//errorlar için yazılan requestler
 const errors = {
   get400Error: () =>
     methods.get("errors/bad-request").catch((error) => console.log(error)),
@@ -72,11 +75,19 @@ const errors = {
     methods.get("errors/server-error").catch((error) => console.log(error)),
 };
 
+//cart için yazılan metotlar
+const cart = {
+  get: () => methods.get("carts"),
+  addItem: (productId, quantity = 1) => methods.post(`carts?productId=${productId}&quantity=${quantity}`, {}),
+  deleteItem: (productId, quantity = 1) => methods.delete(`carts?productId=${productId}&quantity=${quantity}`),
+}
+
 
 //yazılan metotları geri açıyoruz
 const requests = {
   products,
   errors,
+  cart,
 };
 
 //requests'di dışarı açıyoruz. 
