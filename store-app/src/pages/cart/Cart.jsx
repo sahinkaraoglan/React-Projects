@@ -11,45 +11,30 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { currenyTRY } from "../utils/formats";
+import { currenyTRY } from "../../utils/formats";
 import { Delete } from "@mui/icons-material";
-import { useCartContext } from "../context/CartContext";
+import { useCartContext } from "../../context/CartContext";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { useState } from "react";
-import requests from "../api/apiClient";
+import requests from "../../api/apiClient";
+import { useDispatch, useSelector } from "react-redux";
+import { addItemToCart, deleteItemFromCart, setCart } from "./cartSlice";
 
 export default function CartPage() {
-  const { cart, setCart } = useCartContext();
-  const [status, setStatus] = useState({ loading: false, id: "" });
+  const { cart, status } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
 
-  const subTotal = cart?.cartItems
-  .reduce((toplam, item) => 
-    toplam + item.product.price * item.product.quantity, 0);
+  const subTotal = cart?.cartItems.reduce(
+    (toplam, item) => toplam + item.product.price * item.product.quantity,
+    0
+  );
 
   const tax = subTotal * 0.2;
   const total = subTotal + tax;
 
   if (!cart || cart.cartItems.length === 0)
     return <Typography component="h4">Sepetinizde ürün yok</Typography>;
-
-  function handleAddItem(productId, id) {
-    setStatus({ loading: true, id: id });
-    requests.cart
-      .addItem(productId)
-      .then((cart) => setCart(cart))
-      .catch((error) => console.log(error))
-      .finally(() => setStatus({ loading: false, id: "" }));
-  }
-
-  function handleRemoveItem(productId, id, quantity = 1) {
-    setStatus({ loading: true, id: id });
-    requests.cart
-      .deleteItem(productId, quantity)
-      .then((cart) => setCart(cart))
-      .catch((error) => console.log(error))
-      .finally(() => setStatus({ loading: false, id: "" }));
-  }
 
   return (
     <TableContainer component={Paper}>
@@ -78,14 +63,12 @@ export default function CartPage() {
               <TableCell>
                 <Button
                   onClick={() =>
-                    handleAddItem(
-                      item.product.productId,
-                      "add" + item.product.productId
+                    dispatch(
+                      addItemToCart({productId: item.product.productId})
                     )
                   }
                 >
-                  {status.loading &&
-                  status.id === "add" + item.product.productId ? (
+                  {status === "pendingAddItem" + item.product.productId + "single" ? (
                     <CircularProgress size="20px" />
                   ) : (
                     <AddCircleOutlineIcon />
@@ -95,14 +78,17 @@ export default function CartPage() {
                 {item.product.quantity}
                 <Button
                   onClick={() =>
-                    handleRemoveItem(
-                      item.product.productId,
-                      "remove" + item.product.productId
+                    dispatch(
+                      deleteItemFromCart(
+                        {
+                          productId: item.product.productId, 
+                          quantity:1, 
+                          key: "single",
+                        })
                     )
                   }
                 >
-                  {status.loading &&
-                  status.id === "remove" + item.product.productId ? (
+                  {status === "pendingDeleteItem" + item.product.productId + "all" ? (
                     <CircularProgress size="20px" />
                   ) : (
                     <RemoveCircleOutlineIcon />
@@ -115,16 +101,18 @@ export default function CartPage() {
               <TableCell>
                 <Button
                   onClick={() =>
-                    handleRemoveItem(
-                      item.product.productId,
-                      "remove_all" + item.product.productId,
-                      item.product.quantity
+                    dispatch(
+                      deleteItemFromCart(
+                        {
+                          productId: item.product.productId, 
+                          quantity: item.product.quantity,
+                          key: "all",
+                        })
                     )
                   }
                   color="error"
                 >
-                  {status.loading &&
-                  status.id === "remove_all" + item.product.productId ? (
+                  {status === "pendingDeleteItem" + item.product.productId ? (
                     <CircularProgress size="20px" />
                   ) : (
                     <Delete />
@@ -134,16 +122,28 @@ export default function CartPage() {
             </TableRow>
           ))}
           <TableRow>
-            <TableCell align="right" colSpan={5}>Ara Toplam</TableCell>
-            <TableCell align="right" colSpan={5}>{currenyTRY.format(subTotal)}</TableCell>
+            <TableCell align="right" colSpan={5}>
+              Ara Toplam
+            </TableCell>
+            <TableCell align="right" colSpan={5}>
+              {currenyTRY.format(subTotal)}
+            </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell align="right" colSpan={5}>Vergi</TableCell>
-            <TableCell align="right" colSpan={5}>{currenyTRY.format(tax)}</TableCell>
+            <TableCell align="right" colSpan={5}>
+              Vergi
+            </TableCell>
+            <TableCell align="right" colSpan={5}>
+              {currenyTRY.format(tax)}
+            </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell align="right" colSpan={5}>Toplam</TableCell>
-            <TableCell align="right" colSpan={5}>{currenyTRY.format(total)}</TableCell>
+            <TableCell align="right" colSpan={5}>
+              Toplam
+            </TableCell>
+            <TableCell align="right" colSpan={5}>
+              {currenyTRY.format(total)}
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>
