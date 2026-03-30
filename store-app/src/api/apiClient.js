@@ -1,9 +1,17 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import { router } from "../App";
+import { store } from "../store/store";
 
 axios.defaults.baseURL = "http://localhost:5000/";
 axios.defaults.withCredentials = true;
+
+//account için yazılan middleware.
+axios.interceptors.request.use((request) => {
+  const token = store.getState().account.user?.token;
+  if (token) request.headers.Authorization = `Bearer ${token}`;
+  return request;
+});
 
 axios.interceptors.response.use(
   (response) => {
@@ -44,10 +52,9 @@ axios.interceptors.response.use(
     }
 
     return Promise.reject(error.message);
-  }
+  },
 );
 
-//METOTLAR
 const methods = {
   get: (url) => axios.get(url).then((response) => response.data),
   post: (url, body) => axios.post(url, body).then((response) => response.data),
@@ -55,14 +62,11 @@ const methods = {
   delete: (url) => axios.delete(url).then((response) => response.data),
 };
 
-
-//products kısmı için yazılan requestler
 const products = {
   list: () => methods.get("products"),
   details: (id) => methods.get(`products/${id}`),
 };
 
-//errorlar için yazılan requestler
 const errors = {
   get400Error: () =>
     methods.get("errors/bad-request").catch((error) => console.log(error)),
@@ -75,20 +79,25 @@ const errors = {
     methods.get("errors/server-error").catch((error) => console.log(error)),
 };
 
-//cart için yazılan metotlar
 const cart = {
   get: () => methods.get("carts"),
-  addItem: (productId, quantity = 1) => methods.post(`carts?productId=${productId}&quantity=${quantity}`, {}),
-  deleteItem: (productId, quantity = 1) => methods.delete(`carts?productId=${productId}&quantity=${quantity}`),
-}
+  addItem: (productId, quantity = 1) =>
+    methods.post(`carts?productId=${productId}&quantity=${quantity}`, {}),
+  deleteItem: (productId, quantity = 1) =>
+    methods.delete(`carts?productId=${productId}&quantity=${quantity}`),
+};
 
+const account = {
+  login: (formData) => methods.post("users/login", formData),
+  register: (formData) => methods.post("users/register", formData),
+  getUser: () => methods.get("users/getUser"),
+};
 
-//yazılan metotları geri açıyoruz
 const requests = {
   products,
   errors,
   cart,
+  account,
 };
 
-//requests'di dışarı açıyoruz. 
 export default requests;
