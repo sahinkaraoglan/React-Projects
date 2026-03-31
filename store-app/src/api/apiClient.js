@@ -55,6 +55,7 @@ axios.interceptors.response.use(
   },
 );
 
+//METOTAR
 const methods = {
   get: (url) => axios.get(url).then((response) => response.data),
   post: (url, body) => axios.post(url, body).then((response) => response.data),
@@ -62,11 +63,15 @@ const methods = {
   delete: (url) => axios.delete(url).then((response) => response.data),
 };
 
+
+//products kısmı için yazılan requestler
 const products = {
   list: () => methods.get("products"),
   details: (id) => methods.get(`products/${id}`),
 };
 
+
+//errorlar kısmı için yazılan requestler
 const errors = {
   get400Error: () =>
     methods.get("errors/bad-request").catch((error) => console.log(error)),
@@ -79,6 +84,8 @@ const errors = {
     methods.get("errors/server-error").catch((error) => console.log(error)),
 };
 
+
+//cart için yazılan metotlar
 const cart = {
   get: () => methods.get("carts"),
   addItem: (productId, quantity = 1) =>
@@ -93,11 +100,21 @@ const account = {
   getUser: () => methods.get("users/getUser"),
 };
 
+
+const orders = {
+  getOrders: () => methods.get("orders"),
+  getOrder : (id) => methods.get(`orders/${id}`),
+  createOrder: (formData) => methods.post("orders", formData),
+}
+
+//yazılan requestleri geri açıyoruz
 const requests = {
   products,
   errors,
   cart,
   account,
+  orders,
 };
 
+//requestleri dışarı açıyoruz
 export default requests;

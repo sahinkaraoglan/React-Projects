@@ -46,6 +46,10 @@ export const cartSlice = createSlice({
     setCart: (state, action) => {
       state.cart = action.payload;
     },
+    //sipariş verildikten sonra cart üstündeki bilgilerin sıfırlandığı yer.
+    clearCart: (state) => {
+      state.cart = null;
+    },
   },
 
   extraReducers: (builder) => {
@@ -82,4 +86,4 @@ export const cartSlice = createSlice({
   },
 });
 
-export const { setCart } = cartSlice.actions;
+export const { setCart, clearCart } = cartSlice.actions;
