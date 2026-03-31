@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   CircularProgress,
   IconButton,
@@ -20,6 +21,7 @@ import { useState } from "react";
 import requests from "../../api/apiClient";
 import { useDispatch, useSelector } from "react-redux";
 import { addItemToCart, deleteItemFromCart, setCart } from "./cartSlice";
+import { Link } from "react-router";
 
 export default function CartPage() {
   const { cart, status } = useSelector((state) => state.cart);
@@ -37,6 +39,7 @@ export default function CartPage() {
     return <Typography component="h4">Sepetinizde ürün yok</Typography>;
 
   return (
+    <>
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }}>
         <TableHead>
@@ -148,5 +151,22 @@ export default function CartPage() {
         </TableBody>
       </Table>
     </TableContainer>
+    <Box sx={{display: "flex", justifyContent: "space-between", my:3}}>
+      <Button 
+        component={Link} 
+        to="/products" 
+        variant="contained" 
+        color="primary">Continue Shopping
+      </Button>
+
+      <Button 
+        component={Link} 
+        to="/checkout" 
+        variant="contained" 
+        color="secondary">Checkout
+      </Button>
+    </Box>
+    </>
+    
   );
 }
