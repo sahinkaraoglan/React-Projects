@@ -64,8 +64,8 @@ npm run dev
 - **Axios** ile API istekleri
 - **Axios Interceptors** ile merkezi istek/yanıt yönetimi
 - **React Toastify** ile kullanıcı bildirimleri
-- HTTP hata yönetimi (4xx)
-- Sunucu hata yönetimi (5xx)
+- HTTP hata yönetimi 
+- Sunucu hata yönetimi 
 - **404 Not Found** sayfası
 - Form validasyon hataları yönetimi
 
